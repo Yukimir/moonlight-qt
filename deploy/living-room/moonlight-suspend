@@ -1,0 +1,19 @@
+#!/bin/sh
+# Gracefully end the host app before sleeping so Sunshine removes its VDD.
+set -u
+
+host=$(/usr/bin/python3 -c 'import json; print(json.load(open("/home/ubuntu/.config/moonlight-vplus/living-room.json"))["host"])')
+moonlight=/home/ubuntu/apps/moonlight-vplus/source/app/moonlight
+
+if /usr/bin/pgrep -u ubuntu -f "$moonlight stream" >/dev/null; then
+    /usr/sbin/runuser -u ubuntu -- /usr/bin/env QT_QPA_PLATFORM=offscreen \
+        /usr/bin/timeout 8s "$moonlight" quit "$host" \
+        >/run/moonlight-suspend-quit.log 2>&1 || true
+fi
+
+/usr/bin/systemctl stop getty@tty1.service
+/usr/bin/sleep 2
+
+if [ "${1:-}" != "--prepare-only" ]; then
+    /usr/bin/systemctl suspend
+fi

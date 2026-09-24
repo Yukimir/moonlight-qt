@@ -1,0 +1,12 @@
+[Unit]
+Description=Suspend living-room Moonlight when the TV powers off
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/moonlight-cec-sleep
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

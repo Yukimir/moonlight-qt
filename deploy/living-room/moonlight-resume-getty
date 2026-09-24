@@ -1,0 +1,9 @@
+#!/bin/sh
+# systemd-sleep calls this after the kernel has resumed, even if Moonlight
+# remained alive but its streaming session was disconnected by suspend.
+if [ "$1" = post ]; then
+    /usr/bin/logger -t moonlight-resume "post-suspend hook: scheduling getty restart"
+    /usr/bin/systemd-run --collect --on-active=4s \
+        --unit="moonlight-resume-getty-$(date +%s)" \
+        /usr/bin/systemctl restart getty@tty1.service
+fi
