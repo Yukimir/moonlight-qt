@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Moonlight Living Room
+Description=Fullscreen living-room boot image
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/moonlight
+ScriptFile=/usr/share/plymouth/themes/moonlight/moonlight.script

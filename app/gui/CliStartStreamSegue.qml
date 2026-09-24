@@ -2,10 +2,12 @@ import QtQuick 2.0
 import QtQuick.Controls
 
 import ComputerManager 1.0
+import SystemProperties 1.0
 
 import "theme"
 
 Item {
+    property bool replacementRequested: false
     function onSearchingComputer() {
         stageLabel.text = qsTr("Establishing connection to PC...")
     }
@@ -25,12 +27,24 @@ Item {
     }
 
     function onLaunchFailed(message) {
+        if (SystemProperties.autoReplaceApp) {
+            console.error(message)
+            Qt.quit()
+            return
+        }
         errorDialog.text = message
         errorDialog.open()
         console.error(message)
     }
 
     function onAppQuitRequired(appName) {
+        if (SystemProperties.autoReplaceApp) {
+            if (!replacementRequested) {
+                replacementRequested = true
+                launcher.quitRunningApp()
+            }
+            return
+        }
         quitAppDialog.appName = appName
         quitAppDialog.open()
     }

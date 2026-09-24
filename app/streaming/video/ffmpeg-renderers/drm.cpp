@@ -104,6 +104,7 @@ static const std::map<uint32_t, AVPixelFormat> k_DrmToAvFormatMap
 #endif
 #if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 36, 100)
     {DRM_FORMAT_Y410, AV_PIX_FMT_XV30LE},
+    {DRM_FORMAT_XVYU2101010, AV_PIX_FMT_XV30LE},
 #endif
 
     // These mappings are lies, but they're close enough for our purposes.
@@ -1039,12 +1040,12 @@ void DrmRenderer::setHdrMode(bool enabled)
 {
     if (auto prop = m_Connector.property("Colorspace")) {
         if (enabled) {
-            // Prefer BT2020_YCC to allow chroma subsampling
-            if (prop->containsValue("BT2020_YCC")) {
-                m_PropSetter.set(*prop, "BT2020_YCC");
+            // This 4:4:4 scanout is converted to RGB by the display pipe.
+            if (prop->containsValue("BT2020_RGB")) {
+                m_PropSetter.set(*prop, "BT2020_RGB");
             }
             else {
-                m_PropSetter.set(*prop, "BT2020_RGB");
+                m_PropSetter.set(*prop, "BT2020_YCC");
             }
         }
         else {

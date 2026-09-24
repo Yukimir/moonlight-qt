@@ -425,6 +425,16 @@ void SdlInputHandler::handleControllerButtonEvent(SDL_ControllerButtonEvent* eve
             state->lastStartDownTime = SDL_GetTicks();
         }
         else if (state->mouseEmulationTimer != 0) {
+            if (event->button == SDL_CONTROLLER_BUTTON_Y) {
+                // Triangle switches Windows windows only while mouse mode is active.
+                // Complete the chord here so Alt can never remain held if the
+                // controller disconnects before its button-up event arrives.
+                LiSendKeyboardEvent(0x12, KEY_ACTION_DOWN, MODIFIER_ALT);
+                LiSendKeyboardEvent(0x09, KEY_ACTION_DOWN, MODIFIER_ALT);
+                LiSendKeyboardEvent(0x09, KEY_ACTION_UP, MODIFIER_ALT);
+                LiSendKeyboardEvent(0x12, KEY_ACTION_UP, 0);
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Mouse mode: Alt+Tab");
+            }
             for (const auto& binding : k_MouseEmulationButtons) {
                 if (event->button == binding.controllerButton) {
                     LiSendMouseButtonEvent(BUTTON_ACTION_PRESS, binding.mouseButton);

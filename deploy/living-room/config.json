@@ -1,0 +1,13 @@
+{
+  "host": "192.168.1.96",
+  "app": "Steam Big Picture",
+  "wol_mac": "10:7C:61:09:4B:3F",
+  "wol_broadcast": "192.168.1.255",
+  "splash_image": "/home/ubuntu/.local/share/moonlight-vplus/splash.png",
+  "splash_title": "客厅游戏",
+  "splash_subtitle": "正在准备 Steam 大屏幕",
+  "bitrate_kbps": 180000,
+  "probe_port": 47984,
+  "wake_interval_seconds": 30,
+  "retry_seconds": 5
+}

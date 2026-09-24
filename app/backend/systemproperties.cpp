@@ -47,6 +47,7 @@ private:
 
 SystemProperties::SystemProperties()
 {
+    autoReplaceApp = qEnvironmentVariable("MOONLIGHT_AUTO_REPLACE_APP") == "1";
     versionString = QString(VERSION_STR);
     hasDesktopEnvironment = WMUtils::isRunningDesktopEnvironment();
     isRunningWayland = WMUtils::isRunningWayland();

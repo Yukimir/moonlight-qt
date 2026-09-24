@@ -29,6 +29,7 @@ public:
     Q_PROPERTY(bool usesFluentTheme MEMBER usesFluentTheme CONSTANT)
     Q_PROPERTY(QString versionString MEMBER versionString CONSTANT)
     Q_PROPERTY(bool usbForwardingAvailable MEMBER usbForwardingAvailable CONSTANT)
+    Q_PROPERTY(bool autoReplaceApp MEMBER autoReplaceApp CONSTANT)
 
     // Properties queried asynchronously (startAsyncLoad() must be called!)
     Q_PROPERTY(bool hasHardwareAcceleration MEMBER hasHardwareAcceleration NOTIFY hasHardwareAccelerationChanged)
@@ -76,6 +77,7 @@ private:
     bool isDarwin;
     bool isLinux;
     bool usbForwardingAvailable = false;
+    bool autoReplaceApp = false;
 
     // Properties only set if startAsyncLoad() is called
     bool hasHardwareAcceleration;
@@ -89,4 +91,3 @@ private:
     QList<QRect> monitorSafeAreaResolutions;
     QList<int> monitorRefreshRates;
 };
-

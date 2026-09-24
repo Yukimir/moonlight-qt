@@ -11,6 +11,7 @@
 
 #ifdef HAVE_LIBVA_DRM
 #include <xf86drm.h>
+#include <drm_fourcc.h>
 #endif
 
 #include <SDL_syswm.h>
@@ -1215,6 +1216,12 @@ bool VAAPIRenderer::mapDrmPrimeFrame(AVFrame* frame, AVDRMFrameDescriptor* drmDe
     drmDescriptor->nb_layers = vaDrmPrimeDescriptor.num_layers;
     for (uint32_t i = 0; i < vaDrmPrimeDescriptor.num_layers; i++) {
         drmDescriptor->layers[i].format = vaDrmPrimeDescriptor.layers[i].drm_format;
+        // Intel iHD exports packed 10-bit YUV 4:4:4 as Y410. The i915 scanout
+        // planes advertise XV30 instead, which has identical Y/Cb/Cr bit layout
+        // and simply ignores Y410's two alpha bits.
+        if (drmDescriptor->layers[i].format == DRM_FORMAT_Y410) {
+            drmDescriptor->layers[i].format = DRM_FORMAT_XVYU2101010;
+        }
         drmDescriptor->layers[i].nb_planes = vaDrmPrimeDescriptor.layers[i].num_planes;
         for (uint32_t j = 0; j < vaDrmPrimeDescriptor.layers[i].num_planes; j++) {
             drmDescriptor->layers[i].planes[j].object_index = vaDrmPrimeDescriptor.layers[i].object_index[j];

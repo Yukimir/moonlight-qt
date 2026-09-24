@@ -4699,6 +4699,11 @@ void Session::exec()
     if (m_IsFullScreen) {
         if (SDL_SetWindowFullscreen(m_Window, m_FullScreenFlag) == 0) {
             awaitingFullScreenEntry = true;
+            // KMSDRM can reset to the preferred 60 Hz mode as it enters
+            // fullscreen. Reapply the selected stream-matching mode.
+            if (QString(SDL_GetCurrentVideoDriver()) == "KMSDRM") {
+                updateOptimalWindowDisplayMode();
+            }
         }
         else {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
@@ -4729,7 +4734,11 @@ void Session::exec()
             // 没有全屏切换要等：窗口化会话，或者上面那次请求失败了。
             // 失败也照样藏 —— 界面窗口在串流期间没有任何作用，留着它只会把一张
             // 停在加载页的窗口压在串流窗口后面。
-            m_QtWindow->setVisible(false);
+            // EGLFS owns the KMS mode for the lifetime of the Qt window.
+            // Hiding it resets the display to the boot mode during SDL streaming.
+            if (QGuiApplication::platformName() != "eglfs") {
+                m_QtWindow->setVisible(false);
+            }
         }
     }
 
@@ -4997,7 +5006,11 @@ void Session::exec()
             return;
         }
         if (settled || SDL_TICKS_PASSED(SDL_GetTicks(), qtWindowHideDeadline)) {
-            m_QtWindow->setVisible(false);
+            // EGLFS owns the KMS mode for the lifetime of the Qt window.
+            // Hiding it resets the display to the boot mode during SDL streaming.
+            if (QGuiApplication::platformName() != "eglfs") {
+                m_QtWindow->setVisible(false);
+            }
             qtWindowHideDeadline = 0;
         }
     };
