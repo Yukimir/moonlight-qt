@@ -50,8 +50,10 @@ TV, then calls `moonlight-suspend`. That script sends Moonlight's `quit` request
 to Sunshine before stopping tty1 and suspending, so Sunshine removes its
 session virtual display. Install `moonlight-resume-getty` in
 `/usr/lib/systemd/system-sleep/`; this systemd build runs hooks from that
-directory. The hook schedules a tty1 restart four seconds after resume, which
-repaints the splash, sends WOL if the host is unavailable, and starts Steam.
+directory. The hook queues `moonlight-resume-getty.service`, ordered after
+`systemd-suspend.service`, so tty1 restarts as soon as system resume completes,
+without a fixed timer. It repaints the splash, sends WOL if the host is
+unavailable, and starts Steam.
 The mini PC must be woken with its physical power button; DS5 Bluetooth wake
 has not been verified. The Bluetooth USB wake flags remain disabled after a
 spurious early wake in testing.

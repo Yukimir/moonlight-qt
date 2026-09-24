@@ -1,0 +1,7 @@
+[Unit]
+Description=Restart living-room Moonlight after suspend completes
+After=systemd-suspend.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl restart --no-block getty@tty1.service
