@@ -17,8 +17,10 @@ the image to fbdev avoids a second long-running process taking DRM master;
 the framebuffer keeps the image in place until video frames take over.
 
 The installed tty1 login runs `/home/ubuntu/bin/moonlight-console` from
-`~/.profile`. The getty has `--autologin ubuntu`, and `.hushlogin` suppresses
-the login banner. The active Plymouth theme is `plymouth/moonlight.plymouth`
+`~/.profile`. Install `getty-tty1-quiet.conf` as
+`/etc/systemd/system/getty@tty1.service.d/override.conf` to keep the tty1
+autologin while suppressing agetty's `ubuntu (automatic login)` prompt.
+`.hushlogin` suppresses the login banner. The active Plymouth theme is `plymouth/moonlight.plymouth`
 with `quiet splash` on the kernel command line. The same `splash.png` is
 installed into the theme and `~/.local/share/moonlight-vplus/`.
 
@@ -54,6 +56,9 @@ directory. The hook queues `moonlight-resume-getty.service`, ordered after
 `systemd-suspend.service`, so tty1 restarts as soon as system resume completes,
 without a fixed timer. It repaints the splash, sends WOL if the host is
 unavailable, and starts Steam.
-The mini PC must be woken with its physical power button; DS5 Bluetooth wake
-has not been verified. The Bluetooth USB wake flags remain disabled after a
-spurious early wake in testing.
+The paired DS5 can wake this mini PC from S3 with its PS button. Install
+`80-moonlight-wake.rules` in `/etc/udev/rules.d/` to enable wake for its
+built-in Intel Bluetooth USB interface while disabling the keyboard receiver
+and the `usb3` root hub. Enabling the root hub made this particular machine
+wake on its own after about four seconds. The DS5 currently needs a second
+PS press to reconnect to BlueZ and control Steam after waking the PC.

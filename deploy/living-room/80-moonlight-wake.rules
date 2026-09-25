@@ -1,0 +1,7 @@
+# The built-in Intel Bluetooth interface carries the paired DualSense.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="8087", ATTR{idProduct}=="0a2a", ATTR{power/wakeup}="enabled"
+
+# Prevent the keyboard receiver and xHCI root hub from waking the PC.
+# On this board, enabling usb3 woke S3 after about four seconds without input.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2048", ATTR{idProduct}=="2048", ATTR{power/wakeup}="disabled"
+ACTION=="add", SUBSYSTEM=="usb", KERNEL=="usb3", ATTR{power/wakeup}="disabled"
